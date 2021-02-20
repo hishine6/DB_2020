@@ -1,0 +1,10 @@
+drop table Move;
+drop table Store;
+drop table Warehouse;
+drop table Stops;
+drop table Transportation;
+drop table Bills;
+drop table Package;
+drop table Customer;
+drop table Recipient;
+drop table Choose_Service;

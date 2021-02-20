@@ -1,0 +1,137 @@
+create table Choose_Service(Package_type	varchar(20) check (Package_type='flat envelope' OR Package_type='small box' OR Package_type='larger box'), Weight	numeric(10,3) check (Weight>0),Timeliness   varchar(10) check (Timeliness='overnight' OR Timeliness='second day' OR Timeliness='longer'),Service   varchar(20),primary key (Package_type,Weight, Timeliness));
+create table Customer(Customer_ID	varchar(20),Customer_name varchar(20),Address	varchar(20),Contact	numeric(15,0),Payment_Type	varchar(10) check(Payment_Type = 'Infrequent' OR Payment_Type = 'Frequent'),Payment_Account_Number numeric(20,0),primary key(Customer_ID));
+create table Recipient(Recipient_ID	varchar(20),Recipient_name	varchar(20),Address varchar(20),Contact numeric(15,0),primary key(Recipient_ID));
+create table Package(Package_ID	varchar(20),Customer_ID	varchar(20),Recipient_ID	varchar(20),Package_type	varchar(20),Weight	numeric(10,3),Timeliness	varchar(10),Hazardous	varchar(5) check(Hazardous='Yes' OR Hazardous='No'),International	varchar(5) check(International='Yes' OR International='No'),Order_Time	Timestamp,Arrival_Time	Timestamp,primary key(Package_ID),foreign key(Recipient_ID) references Recipient(Recipient_ID) on delete set null,foreign key(Package_type, Weight, Timeliness) references Choose_Service(Package_type, Weight, Timeliness) on delete set null,foreign key(Customer_ID) references Customer(Customer_ID) on delete set null);
+create table Bills(Package_ID varchar(20), Prepaid varchar(5) check(Prepaid='Yes' OR Prepaid='No'),Cost numeric(15,5),primary key (Package_ID), foreign key (Package_ID) references Package(Package_ID));
+create table Warehouse(Warehouse_ID	varchar(20),Location	varchar(20),Contact	numeric(12,0),primary key(Warehouse_ID));
+create table Store(Package_ID varchar(20),Warehouse_ID	varchar(20),Start_Time	timestamp,End_Time	timestamp,primary key(Package_ID, Warehouse_ID),foreign key(Package_ID) references Package(Package_ID),foreign key(Warehouse_ID) references Warehouse(Warehouse_ID));
+create table Transportation(Transportation_ID	varchar(20),Departure_Time	timestamp,Transportation_Device	varchar(10),Arrival_Time	timestamp,Departure_Point	varchar(20),Destination	varchar(20),Driver_ID	varchar(20),primary key(Transportation_ID, Departure_Time,Transportation_Device));
+create table Move(Package_ID	varchar(20),Transportation_ID	varchar(20),Departure_Time	timestamp,Transportation_Device	varchar(10),Start_Time	timestamp,End_Time	timestamp,Departure_Point	varchar(20),Destination	varchar(20),primary key(Package_ID,Transportation_ID,Departure_Time, Transportation_Device),foreign key(Package_ID) references Package(Package_ID),foreign key(Transportation_ID,Departure_Time, Transportation_Device) references Transportation(Transportation_ID,Departure_Time, Transportation_Device));
+create table Stops(Location	varchar(20),Start_Time	timestamp,Transportation_ID	varchar(20),Departure_Time	timestamp,Transportation_Device	varchar(10),End_Time	timestamp,primary key(Location,Start_Time,Transportation_ID,Departure_Time,Transportation_Device),foreign key(Transportation_ID,Departure_Time,Transportation_Device) references Transportation(Transportation_ID,Departure_Time,Transportation_Device));
+insert into Choose_Service values('flat envelope', '37.5', 'overnight','service_1');
+insert into Choose_Service values('flat envelope', '90', 'overnight','service_1');
+insert into Choose_Service values('flat envelope', '39', 'second day','service_1');
+insert into Choose_Service values('flat envelope', '39.5', 'second day','service_5');
+insert into Choose_Service values('flat envelope', '84.3', 'longer','service_4');
+insert into Choose_Service values('small box', '84.3', 'overnight','service_3');
+insert into Choose_Service values('small box', '40', 'overnight','service_2');
+insert into Choose_Service values('small box', '23', 'second day','service_3');
+insert into Choose_Service values('small box', '55', 'second day','service_1');
+insert into Choose_Service values('small box', '55', 'longer','service_1');
+insert into Choose_Service values('larger box', '84.3', 'overnight','service_3');
+insert into Choose_Service values('larger box', '24', 'overnight','service_3');
+insert into Choose_Service values('larger box', '37', 'second day','service_3');
+insert into Choose_Service values('larger box', '40', 'second day','service_3');
+insert into Choose_Service values('larger box', '39.3', 'longer','service_3');
+insert into Customer values('20161566','Kwon Hyung Joon','sogang K-301','01023454321','Infrequent',NULL);
+insert into Customer values('20161567','Chun He Jin', 'sogang R-912', '01022020891','Infrequent',NULL);
+insert into Customer values('20161568','Jung Jin One', 'sogang R-914', '01044903304','Infrequent',NULL);
+insert into Customer values('20161569','Kang Min Suck', 'sogang RA-993', '01030294039','Infrequent',NULL);
+insert into Customer values('20161570','Son', 'sogang M-101', '01012340938','Infrequent',NULL);
+insert into Customer values('20161571','Kim Su Hyun', 'sogang R-123', '01030491009','Infrequent',NULL);
+insert into Customer values('20161572','Jo Eun Gee', 'sogang D-303', '01010930023','Infrequent',NULL);
+insert into Customer values('20161573','Park Seung Joo', 'sogang D-301', '01057684955','Infrequent',NULL);
+insert into Customer values('20161574','Seul Gee', 'sogang K-401', '01099807783','frequent','1034004924');
+insert into Customer values('20161575','Ted Mosby', 'sogang AS-202', '01029384820','frequent','20341435234');
+insert into Customer values('20161576','Sheldon cooper', 'sogang R-505', '01009877899','frequent','120349120348');
+insert into Customer values('20161577','Rajesh Coothropaly', 'sogang J-101', '01078976786','frequent','09839573023');
+insert into Customer values('20161578','Kim so Jin', 'sogang J-303', '01039483947','frequent','34219395982');
+insert into Customer values('20161579','Anna Kendrick', 'sogang M-302', '01039208937','frequent','0093927492701');
+insert into Customer values('20161580','LeBron James', 'sogang R-912', '01000098889','frequent','14148582393');
+insert into Recipient values('20161581','Sherlock Holms','221B Baker Street)','0432501');
+insert into Recipient values('20161582','John Watson','221C Baker Street)','125342341');
+insert into Recipient values('20161583','Bilbo Bagins','221D Baker Street)','32643543');
+insert into Recipient values('20161584','Anthony Davids','221E Baker Street)','365474374');
+insert into Recipient values('20161585','Michael Jordan','221F Baker Street)','74572855');
+insert into Recipient values('20161586','Stephen Curry','221G Baker Street)','564722818');
+insert into Recipient values('20161587','Kevin Snake Durant','221H Baker Street)','58679796');
+insert into Recipient values('20161588','Kyre Irving','221I Baker Street)','67836838');
+insert into Recipient values('20161589','Klay Thompson','221J Baker Street)','5856372');
+insert into Recipient values('20161590','Kevin Love','221K Baker Street)','231412341');
+insert into Recipient values('20161591','Kawahi Leonard','221L Baker Street)','3234623');
+insert into Recipient values('20161592','Demar Derozan','221M Baker Street)','2364248');
+insert into Recipient values('20161593','Deric Rose','221N Baker Street)','43685794');
+insert into Recipient values('20161594','Super Nova','221O Baker Street)','34756436');
+insert into Recipient values('20161595','Ben Simmons','221P Baker Street)','347457347');
+insert into Warehouse values('SEOUL-39','SOUTH KOREA, SEOUL','024403414');
+insert into Warehouse values('SEOUL-23','SOUTH KOREA, SEOUL','024233414');
+insert into Warehouse values('SEOUL-53','SOUTH KOREA, SEOUL','024401414');
+insert into Warehouse values('SEOUL-12','SOUTH KOREA, SEOUL','024413314');
+insert into Warehouse values('SEOUL-00','SOUTH KOREA, SEOUL','024253414');
+insert into Warehouse values('BUSAN-39','SOUTH KOREA, BUSAN','0316704414');
+insert into Warehouse values('BUSAN-34','SOUTH KOREA, BUSAN','0312723454');
+insert into Warehouse values('BUSAN-11','SOUTH KOREA, BUSAN','0310943364');
+insert into Warehouse values('BUSAN-01','SOUTH KOREA, BUSAN','0314346414');
+insert into Warehouse values('BUSAN-94','SOUTH KOREA, BUSAN','0314303774');
+insert into Warehouse values('CHEONG JU-12','SOUTH KOREA,CHEONGJU','0511401859');
+insert into Warehouse values('CHEONG JU-10','SOUTH KOREA,CHEONGJU','0512202022');
+insert into Warehouse values('CHEONG JU-05','SOUTH KOREA,CHEONGJU','0515532945');
+insert into Warehouse values('CHEONG JU-02','SOUTH KOREA,CHEONGJU','0514443901');
+insert into Warehouse values('CHEONG JU-07','SOUTH KOREA,CHEONGJU','0514012342');
+insert into Transportation values('1721','2020-01-03 14:02:21','Truck','2020-01-03 17:00:03','SEOUL','BUSAN','20031');
+insert into Transportation values('1721','2019-06-05 09:00:00','Truck',NULL,'SEOUL','BUSAN','20031');
+insert into Transportation values('3443','1997-01-21 14:00:22','Plane','1997-01-22 15:00:03','CALIFORNIA','LONDON','412443');
+insert into Transportation values('3443','2019-12-30 10:00:00','Train','2019-12-31 12:00:00','SEOUL','NAMHAE','535124');
+insert into Transportation values('4243','2017-03-06 12:33:44','Ship','2017-03-08 13:00:00','CALIFORNIA','HAWAII','341243');
+insert into Transportation values('4453','2017-02-08 12:30:00','Truck','2017-02-12 14:00:03','MIAMI','MEXICOCITY','34129');
+insert into Transportation values('0003','2018-02-13 18:30:00','Truck','2018-02-14 18:30:00','BUSAN','SEOUL','6993');
+insert into Transportation values('0324','2018-02-17 20:00:00','Truck','2018-02-19 09:03:33','GANGRUNG','GYUNGJOO','7546');
+insert into Transportation values('0988','2018-02-20 09:50:00','Truck','2018-02-21 12:30:00','SEOUL','BUSAN','9490');
+insert into Transportation values('0288','2018-02-27 15:00:00','Truck','2018-02-28 09:03:33','PAJU','INCHEON','7748');
+insert into Transportation values('2341','2017-03-12 18:00:00','Train','2017-03-15 09:30:24','MOSCOW','LONDON','33354');
+insert into Transportation values('5432','2017-05-03 12:30:00','Ship','2017-05-06 12:30:00','JEJU','INCHEON','3414');
+insert into Transportation values('3414','2017-06-06 10:45:00','Truck','2017-06-07 12:00:00','NEW YORK','TEXAS','97869');
+insert into Transportation values('3665','2015-03-04 19:30:00','Truck','2015-03-05 13:00:00','BUSAN','NAMEHAE','12433');
+insert into Transportation values('1992','2017-03-12 14:20:22','Ship','2017-03-15 19:00:00','HAWAI','TOKYO','1532');
+insert into Package values('19-0000001','20161580','20161586','larger box', '84.3', 'overnight','No','No','2019-06-04 10:00:33',NULL);
+insert into Package values('19-0000002','20161575','20161595','flat envelope', '37.5', 'overnight','No','No','2019-06-04 10:00:33',NULL);
+insert into Package values('19-0000003','20161576','20161583','small box', '40', 'overnight','No','No','2019-06-04 14:34:33','2019-06-05 11:30:00');
+insert into Package values('19-0000004','20161576','20161584','larger box', '40', 'second day','Yes','No','2019-12-29 14:37:33','2019-12-31 11:30:00');
+insert into Package values('17-0000001','20161572','20161585','small box', '23', 'second day','No','Yes','2017-03-07 14:00:00','2017-03-10 14:00:00');
+insert into Package values('18-0000001','20161570','20161590','small box', '84.3', 'overnight','Yes','Yes','2018-02-09 12:00:00','2018-02-11 12:03:33');
+insert into Package values('18-0000002','20161579','20161588','larger box', '84.3', 'overnight','No','Yes', '2018-02-13 16:30:00','2018-02-14 09:03:33');
+insert into Package values('18-0000003','20161579','20161593','flat envelope', '84.3', 'longer','Yes','No', '2018-02-17 18:00:00','2018-02-19 12:50:33');
+insert into Package values('18-0000004','20161579','20161592','flat envelope', '37.5', 'overnight','Yes','Yes', '2018-02-20 09:35:00','2018-02-21 15:03:33');
+insert into Package values('18-0000005','20161579','20161582','larger box', '40', 'second day','Yes','No', '2018-02-27 12:00:00','2018-02-28 09:00:00');
+insert into Package values('19-0000005','20161574','20161581','larger box', '40', 'second day','No','No','2019-06-04 10:00:33',NULL);
+insert into Package values('19-0000006','20161578','20161595','small box', '55', 'second day','No','No','2019-06-04 10:00:33',NULL);
+insert into Package values('17-0000002','20161572','20161584','small box', '84.3', 'overnight','Yes','No','2017-03-13 10:30:00','2017-03-14 09:30:24');
+insert into Package values('17-0000003','20161580','20161590','larger box', '40', 'second day','Yes','No','2017-05-03 10:30:00','2017-05-06 12:30:00');
+insert into Package values('17-0000004','20161580','20161593','larger box', '24', 'overnight','No','No','2017-06-05 10:45:00','2017-06-07 12:00:00');
+insert into Store values('19-0000004','CHEONG JU-07','2019-12-29 19:00:00','2019-12-30 12:00:00');
+insert into Store values('19-0000004','CHEONG JU-05','2019-12-30 15:00:00','2019-12-30 15:30:00');
+insert into Store values('19-0000004','CHEONG JU-12','2019-12-30 19:30:00','2019-12-30 20:00:00');
+insert into Store values('18-0000005','BUSAN-11','2018-02-27 15:00:00','2018-02-27 16:00:00');
+insert into Store values('18-0000005','BUSAN-34','2018-02-27 21:00:00','2018-02-27 21:30:00');
+insert into Store values('17-0000002','SEOUL-12','2017-03-13 20:30:00','2017-03-13 21:00:00');
+insert into Store values('17-0000002','BUSAN-39','2017-03-13 23:30:00','2017-03-13 23:45:00');
+insert into Bills values ('19-0000001','No','35000'); #lebron -> curry (crash)
+insert into Bills values ('19-0000002','Yes','43000'); # ted -> ben (crash)
+insert into Bills values ('19-0000003','No','20000'); #cooper->bilbo (last delivery)
+insert into Bills values ('19-0000004','No','1500'); #cooper -> davids 
+insert into Bills values ('17-0000001','No','23000');#JoEunGee-->Michael Jordan (late)
+insert into Bills values ('18-0000001','Yes','33445');#Son --> kevin love (late)
+insert into Bills values ('18-0000002','Yes','340000');#anna kendrick -> kyre irving (for bill)
+insert into Bills values ('18-0000003','Yes','230000'); # anna kendrick -> deric rose (for bill)
+insert into Bills values ('18-0000004','Yes','1000'); #anna kendrick -> demar derozan (for bill)
+insert into Bills values ('18-0000005','Yes','19000'); # anna kendrick -> john watson (for bill)
+insert into Bills values ('19-0000005','Yes','42000'); #seul gee --> sherlock holms (crash)
+insert into Bills values ('19-0000006','No','49000'); #kim so jin --> ben simmons (crash)
+insert into Bills values ('17-0000002','Yes','21000'); #joe eun gee --> anthony davids (late)
+insert into Bills values ('17-0000003','No','41000'); #lebron james --> kevin love (late)
+insert into Bills values ('17-0000004','Yes','1000'); #lebron james --> deric rose (late)
+insert into Move values('19-0000001','1721','2019-06-05 09:00:00','Truck','2019-06-05 09:00:00', NULL,'SEOUL','BUSAN');
+insert into Move values('19-0000002','1721','2019-06-05 09:00:00','Truck','2019-06-05 09:00:00', NULL,'SEOUL','BUSAN');
+insert into Move values('19-0000003','1721','2019-06-05 09:00:00','Truck','2019-06-05 10:00:00', '2019-06-05 11:30:00','SEOUL','DAEGU');
+insert into Move values('19-0000004','3443','2019-12-30 10:00:00','Train','2019-12-30 10:00:00', '2019-12-31 11:30:00','SEOUL','CHEUGJU');
+insert into Move values('17-0000001','4243','2017-03-06 12:33:44','Ship','2017-03-07 15:00:00','2017-03-10 13:00:00','LA','HAWAII');
+insert into Move values('18-0000001','4453','2017-02-08 12:30:00','Truck','2017-02-09 14:00:03','2018-02-11 09:03:33','MIAMI','WASHINGTON');
+insert into Move values('18-0000002','0003','2018-02-13 18:30:00','Truck','2018-02-14 18:30:00','2018-02-14 09:03:33','BUSAN','SEOUL');
+insert into Move values('18-0000003','0324','2018-02-17 20:00:00','Truck','2018-02-19 09:03:33','2018-02-19 12:50:33','GANGRUNG','GYUNGJOO');
+insert into Move values('18-0000004','0988','2018-02-20 09:50:00','Truck','2018-02-21 12:30:00','2018-02-21 15:03:33','SEOUL','BUSAN');
+insert into Move values('18-0000005','0288','2018-02-27 15:00:00','Truck','2018-02-28 09:03:33','2018-02-28 09:00:00','PAJU','INCHEON');
+insert into Move values('19-0000005','1721','2019-06-05 09:00:00','Truck','2019-06-05 09:00:00', NULL,'SEOUL','BUSAN');
+insert into Move values('19-0000006','1721','2019-06-05 09:00:00','Truck','2019-06-05 09:00:00', NULL,'SEOUL','BUSAN');
+insert into Move values('17-0000002','2341','2017-03-12 18:00:00','Train','2017-03-12 18:00:00','2017-03-15 09:30:24','MOSCOW','LONDON');
+insert into Move values('17-0000003','5432','2017-05-03 12:30:00','Ship','2017-05-03 12:30:00','2017-05-06 12:30:00','JEJU','INCHEON');
+insert into Move values('17-0000004','3414','2017-06-06 10:45:00','Truck','2017-06-06 10:45:00','2017-06-07 12:00:00','NEW YORK','TEXAS');
