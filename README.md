@@ -1,5 +1,5 @@
 # DB_2020
-SOGANG_UNIV_DATA_BASE_2020 PROJECT 1~2
+SOGANG_UNIV_DATA_BASE_2020 PROJECT 1~2  
 Goal: make your own Package Delivery System Data Base
 
 # Project 1  
